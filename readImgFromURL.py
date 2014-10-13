@@ -227,22 +227,23 @@ class cReadImgFromURL :
             # --- Check if the image file already exists. Provides an appropriate name: ---
             imgFileName = self._getImgFileName( url )
 
+            if  not imgFileName :
+                return  RCOK
+
+            # --- Open URL: ---
+            response = urlOpen( url )
+
             # --- Handle image file as binary: ---
-            if  imgFileName :
-                localImgFile = open( imgFileName, 'wb' )
+            localImgFile = open( imgFileName, 'wb' )
 
-            if  localImgFile :
-                # --- Open URL: ---
-                response = urlOpen( url )
+            # --- Write image file to local disc: ---
+            localImgFile.write( response.read() )
 
-                # --- Write image file to local disc: ---
-                localImgFile.write( response.read() )
+            # --- Close local image file: ---
+            localImgFile.close()
 
-                # --- Close local image file: ---
-                localImgFile.close()
-
-                self._numCopied  += 1
-                self._prot( "copy of '%s' OK!" %( imgFileName ) )
+            self._numCopied  += 1
+            self._prot( "copy of '%s' OK!" %( imgFileName ) )
         except :
             self._errMsg = "exception occurred in '%s()': %s!" %( self._readURL.__name__, sys.exc_info()[1] )
             self._prot( self._errMsg )
